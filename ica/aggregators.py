@@ -19,7 +19,7 @@ class Count(Aggregator):
         for x in self.domain_labels:
             neighbor_undirected.append(0.0)
         for i in graph.get_neighbors(node):
-            if i in conditional_node_to_label_map.keys():
+            if i in list(conditional_node_to_label_map.keys()):
                 index = self.domain_labels.index(conditional_node_to_label_map[i])
                 neighbor_undirected[index] += 1.0
         return neighbor_undirected

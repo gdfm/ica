@@ -70,8 +70,8 @@ class RelationalClassifier(Classifier):
         conditional_map = {}
 
         if bootstrap:
-            predictclf = local_classifier.predict(graph, range(len(graph.node_list)))
-            conditional_map = self.cond_mp_upd(graph, conditional_map, predictclf, range(len(graph.node_list)))
+            predictclf = local_classifier.predict(graph, list(range(len(graph.node_list))))
+            conditional_map = self.cond_mp_upd(graph, conditional_map, predictclf, list(range(len(graph.node_list))))
 
         for i in train_indices:
             conditional_map[graph.node_list[i]] = graph.node_list[i].label

@@ -36,7 +36,7 @@ if args.validation:
     test = idx_val
 else:
     test = idx_test
-eval_idx = np.setdiff1d(range(adj.shape[0]), idx_train)
+eval_idx = np.setdiff1d(list(range(adj.shape[0])), idx_train)
 
 # run training
 ica_accuracies = list()
@@ -51,14 +51,17 @@ for run in range(args.num_trials):
     local_clf = LocalClassifier(args.classifier)
     agg = pick_aggregator(args.aggregate, domain_labels)
     relational_clf = RelationalClassifier(args.classifier, agg)
+    local_clf.fit(graph, train)
+    local_predict = local_clf.predict(graph, test)
+    local_accuracy = accuracy_score(y_true, local_predict)
     ica = ICA(local_clf, relational_clf, args.bootstrap, max_iteration=args.max_iteration)
     ica.fit(graph, train)
     conditional_node_to_label_map = create_map(graph, train)
     ica_predict = ica.predict(graph, eval_idx, test, conditional_node_to_label_map)
     ica_accuracy = accuracy_score(y_true, ica_predict)
     ica_accuracies.append(ica_accuracy)
-    print 'Run ' + str(run) + ': \t\t' + str(ica_accuracy) + ', Elapsed time: \t\t' + str(time.time() - t_begin)
+    print(f'Run {run}:\t Local={local_accuracy} \t ICA={ica_accuracy} \t Elapsed time={time.time() - t_begin}')
 
-print("Final test results: {:.5f} +/- {:.5f} (sem)".format(np.mean(ica_accuracies), sem(ica_accuracies)))
+print(("Final test results: {:.5f} +/- {:.5f} (sem)".format(np.mean(ica_accuracies), sem(ica_accuracies))))
 
 
